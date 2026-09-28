@@ -1,0 +1,267 @@
+// NOVA TECH — esquema de datos
+//
+// PORTABILIDAD: este esquema está escrito para funcionar sin cambios tanto en
+// SQLite (desarrollo) como en PostgreSQL (producción en Vercel). Por eso:
+//   - No se usan `enum` (SQLite no los soporta): los estados son String
+//     validados con Zod en `src/lib/validations.ts`.
+//   - No se usan arrays escalares: las imágenes y variantes son tablas propias.
+//   - No se usan tipos nativos (@db.Text, etc.).
+//
+// Para pasar a Postgres: `npm run db:use-postgres` (cambia el provider) y
+// apunta DATABASE_URL a tu instancia. Ver README.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ---------------------------------------------------------------------------
+// Administración
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("ADMIN") // ADMIN | EDITOR
+  active       Boolean  @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+}
+
+/// Configuración de la tienda editable desde el panel (clave/valor).
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ---------------------------------------------------------------------------
+// Catálogo
+// ---------------------------------------------------------------------------
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  image       String?
+  icon        String? // nombre de icono lucide-react
+  position    Int       @default(0)
+  active      Boolean   @default(true)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([active, position])
+}
+
+model Product {
+  id          String @id @default(cuid())
+  name        String
+  slug        String @unique
+  /// Resumen corto para tarjetas de catálogo.
+  summary     String
+  description String
+
+  /// Precios en pesos colombianos enteros (COP no usa decimales).
+  price          Int
+  /// Precio tachado. Si existe y es mayor que `price`, el producto está en oferta.
+  compareAtPrice Int?
+
+  sku   String? @unique
+  stock Int     @default(0)
+  brand String?
+
+  active     Boolean @default(true)
+  featured   Boolean @default(false)
+  bestSeller Boolean @default(false)
+  isNew      Boolean @default(false)
+
+  /// Etiqueta libre adicional ("Descuento de Temporada", "Edición limitada"…).
+  badge String?
+
+  /// Métricas usadas por el dashboard.
+  views     Int @default(0)
+  unitsSold Int @default(0)
+
+  /// Especificaciones técnicas serializadas como JSON `[{label,value}]`.
+  /// Se guarda como String para no depender del tipo Json (ausente en SQLite).
+  specs String @default("[]")
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  images     ProductImage[]
+  variants   ProductVariant[]
+  reviews    Review[]
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([active, createdAt])
+  @@index([active, bestSeller])
+  @@index([categoryId, active])
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String  @default("")
+  position  Int     @default(0)
+
+  @@index([productId, position])
+}
+
+/// Variante seleccionable. `group` agrupa las opciones en un selector
+/// ("color", "almacenamiento", "talla"); `label` es el nombre visible del grupo.
+model ProductVariant {
+  id         String  @id @default(cuid())
+  productId  String
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  group      String
+  label      String
+  value      String
+  /// Color hex para los swatches cuando group == "color".
+  hex        String?
+  /// Diferencia de precio sobre el precio base, en COP (puede ser negativa).
+  priceDelta Int     @default(0)
+  stock      Int     @default(0)
+  position   Int     @default(0)
+
+  @@unique([productId, group, value])
+  @@index([productId, position])
+}
+
+// ---------------------------------------------------------------------------
+// Reseñas
+// ---------------------------------------------------------------------------
+
+model Review {
+  id         String   @id @default(cuid())
+  productId  String?
+  product    Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  authorName String
+  city       String?
+  rating     Int
+  title      String?
+  body       String
+  /// Compra verificada: el cliente tiene un pedido entregado.
+  verified   Boolean  @default(false)
+  approved   Boolean  @default(true)
+  /// Se muestra en el carrusel de testimonios de la home.
+  featured   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([productId, approved])
+  @@index([approved, featured])
+}
+
+// ---------------------------------------------------------------------------
+// Pedidos (Pago Contra Entrega)
+// ---------------------------------------------------------------------------
+
+model Order {
+  /// Referencia legible para el cliente y WhatsApp: NT-2609-0042
+  orderNumber String @unique
+  id          String @id @default(cuid())
+
+  /// PENDIENTE | CONFIRMADO | ENVIADO | ENTREGADO | CANCELADO
+  status String @default("PENDIENTE")
+
+  customerName  String
+  customerPhone String
+  customerEmail String?
+
+  address    String
+  city       String
+  department String
+  /// Referencias de ubicación para el repartidor.
+  notes      String?
+
+  subtotal   Int
+  shipping   Int @default(0)
+  discount   Int @default(0)
+  total      Int
+  itemsCount Int
+
+  /// Notas internas del equipo, no visibles para el cliente.
+  adminNotes String?
+  /// Motivo cuando status == CANCELADO.
+  cancelReason String?
+
+  items OrderItem[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  confirmedAt DateTime?
+  shippedAt   DateTime?
+  deliveredAt DateTime?
+
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@index([customerPhone])
+}
+
+/// Los datos del producto se copian al crear el pedido: si luego cambia el
+/// precio o se borra el producto, el histórico del pedido no se altera.
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  productName String
+  productSlug String
+  image       String?
+  /// Variantes elegidas, ya formateadas: "Color: Negro · 256 GB".
+  variantLabel String?
+
+  unitPrice Int
+  quantity  Int
+  lineTotal Int
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// ---------------------------------------------------------------------------
+// Campañas
+// ---------------------------------------------------------------------------
+
+/// Banner del hero de la home. Permite programar campañas de temporada
+/// (Black Friday, Navidad, Verano) por fechas y activarlas desde el panel.
+model Banner {
+  id       String  @id @default(cuid())
+  eyebrow  String?
+  title    String
+  subtitle String?
+  ctaLabel String?
+  ctaHref  String?
+  image    String?
+  /// Clave de tema visual: default | blackfriday | navidad | verano | promo
+  theme    String  @default("default")
+  active   Boolean @default(false)
+  position Int     @default(0)
+  startsAt DateTime?
+  endsAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([active, position])
+}

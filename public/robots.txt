@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Zonas privadas o sin valor para buscadores
+Disallow: /admin
+Disallow: /login
+Disallow: /checkout
+Disallow: /carrito
+Disallow: /pedido/
+Disallow: /api/
