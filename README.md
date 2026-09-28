@@ -11,27 +11,34 @@ catálogo, pedidos, campañas y reseñas.
 
 ## Arranque rápido
 
-Arranca con SQLite, así que no hace falta levantar ninguna base de datos.
+El esquema apunta a **PostgreSQL**, que es lo que corre en producción.
 
 ```bash
 npm install
-cp .env.example .env          # genera AUTH_SECRET (ver abajo)
-npx prisma migrate deploy     # crea las tablas en ./dev.db
+cp .env.example .env          # pon tu DATABASE_URL y genera AUTH_SECRET
+npx prisma migrate deploy     # crea las tablas
 npm run db:seed               # carga catálogo, pedidos y reseñas de ejemplo
 npm run dev
 ```
 
+Si el proyecto ya está desplegado, `vercel env pull .env.local` trae la
+conexión sin copiar nada a mano.
+
 La tienda queda en <http://localhost:3000> y el panel en
 <http://localhost:3000/admin>.
 
-### Para producción
+### Sin servidor de base de datos
+
+Para trabajar en local contra un archivo SQLite:
 
 ```bash
-npm run db:use-postgres       # cambia el provider y regenera la migración
+npm run db:use-sqlite         # cambia el provider y regenera la migración
+# y DATABASE_URL="file:./dev.db" en .env
+npx prisma migrate deploy && npm run db:seed
 ```
 
 Los modelos no cambian: el esquema está escrito para funcionar igual en ambos
-motores. Ver [Despliegue en Vercel](#despliegue-en-vercel).
+motores. **Vuelve a `npm run db:use-postgres` antes de desplegar.**
 
 ### Acceso al panel
 
@@ -48,7 +55,7 @@ Credenciales del seed (se definen en `.env`):
 ### Variables de entorno
 
 ```bash
-DATABASE_URL="file:./dev.db"              # Postgres en producción
+DATABASE_URL="postgresql://…?sslmode=require"
 AUTH_SECRET="…"                           # openssl rand -base64 32
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 NEXT_PUBLIC_WHATSAPP_NUMBER="573001234567" # internacional, sin "+" ni espacios
@@ -69,7 +76,7 @@ por el real antes de publicar o los clientes escribirán a un número inexistent
 | Framework | Next.js 16 (App Router, React 19, Turbopack) |
 | Lenguaje | TypeScript en modo estricto |
 | Estilos | Tailwind CSS v4 + shadcn/ui (Base UI) |
-| Base de datos | Prisma 7 · SQLite en local, PostgreSQL en producción |
+| Base de datos | Prisma 7 · PostgreSQL (SQLite opcional en local) |
 | Autenticación | Auth.js v5 (NextAuth) con credenciales + bcrypt |
 | Validación | Zod v4 · React Hook Form en el checkout |
 | Iconos | lucide-react |
@@ -151,6 +158,16 @@ validados con Zod y las especificaciones técnicas se guardan como JSON en texto
 El script `scripts/datasource.mjs` cambia el motor y regenera la migración
 inicial con `prisma migrate diff`, que no necesita una base en marcha.
 
+**El pool de conexiones está limitado a 1 por instancia.** Es el detalle que
+tumba más despliegues serverless: cada lambda abre su propio pool y hay muchas
+lambdas a la vez, así que con el `max: 10` que trae `pg` por defecto bastan
+tres peticiones concurrentes para agotar una base de 30 conexiones y que todo
+devuelva `P2037: too many connections`. El cliente además se cachea en
+`globalThis` también en producción, porque los contenedores se reutilizan entre
+peticiones. Con un endpoint agrupado (el `-pooler` de Neon, PgBouncer,
+Supabase) el pooler multiplexa por ti y conviene subirlo con
+`DATABASE_POOL_MAX=5`. Ver [`src/lib/db.ts`](src/lib/db.ts).
+
 **Los productos con pedidos no se eliminan, se ocultan.** El histórico guarda
 nombre y precio de cada línea, pero borrar el producto rompería el enlace.
 
@@ -204,13 +221,6 @@ scripts de Next. Es el siguiente paso natural de endurecimiento.
 SQLite no sirve en Vercel: el sistema de archivos es efímero y de solo lectura.
 Hace falta un PostgreSQL gestionado.
 
-**0. Cambia el datasource y súbelo**
-
-```bash
-npm run db:use-postgres
-git commit -am "Datasource a PostgreSQL" && git push
-```
-
 **1. Crea la base de datos**
 
 En el panel de Vercel → *Storage* → *Create Database* → **Neon (Postgres)**. La
@@ -222,6 +232,7 @@ proveedor sirve: basta con crear la variable a mano.
 | Variable | Valor |
 |---|---|
 | `DATABASE_URL` | la inyecta Neon; si no, la cadena con `?sslmode=require` |
+| `DATABASE_POOL_MAX` | opcional; `1` por defecto, `5` si usas endpoint agrupado |
 | `AUTH_SECRET` | `openssl rand -base64 32` |
 | `NEXT_PUBLIC_SITE_URL` | `https://tu-dominio.vercel.app` |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | el número real que atiende los pedidos |

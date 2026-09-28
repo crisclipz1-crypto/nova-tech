@@ -1,2 +1,2 @@
 # Generado por scripts/datasource.mjs
-provider = "sqlite"
+provider = "postgresql"

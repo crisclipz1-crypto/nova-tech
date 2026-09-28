@@ -29,6 +29,9 @@ Auth.js v5 · Tailwind v4 · shadcn/ui sobre Base UI.
   semántica de enlace.
 - **No exportes constantes desde módulos `"use client"` hacia el servidor.** Los
   valores compartidos viven en `src/types/`.
+- **No subas el `max` del pool de `pg` sin un endpoint agrupado.** En serverless
+  cada instancia abre el suyo; con el `max: 10` por defecto tres peticiones
+  concurrentes agotan una base de 30 conexiones (`P2037`).
 - **El color de marca es #0037FF y va en tokens**, no incrustado en clases. Usa
   `bg-brand` / `text-brand` / `brand-muted` / `brand-soft`. Sobre fondo oscuro
   el azul base no contrasta (2.82:1): ahí se usa `brand-soft`. El blanco
