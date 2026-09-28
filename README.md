@@ -11,16 +11,36 @@ catálogo, pedidos, campañas y reseñas.
 
 ## Arranque rápido
 
+El esquema apunta a **PostgreSQL**, que es lo que corre en producción.
+
 ```bash
 npm install
-cp .env.example .env          # y genera AUTH_SECRET (ver abajo)
-npm run db:migrate            # crea la base SQLite local
+cp .env.example .env          # pon tu DATABASE_URL y genera AUTH_SECRET
+npx prisma migrate deploy     # crea las tablas
 npm run db:seed               # carga catálogo, pedidos y reseñas de ejemplo
 npm run dev
 ```
 
+Si el proyecto ya está desplegado, `vercel env pull .env.local` trae la
+conexión sin copiar nada a mano.
+
 La tienda queda en <http://localhost:3000> y el panel en
 <http://localhost:3000/admin>.
+
+### Sin servidor de base de datos
+
+Para desarrollar con SQLite en un archivo local:
+
+```bash
+npm run db:use-sqlite         # cambia el provider y regenera la migración
+# DATABASE_URL="file:./dev.db" en .env
+npx prisma migrate deploy && npm run db:seed
+```
+
+Los modelos no cambian: el esquema está escrito para funcionar igual en ambos
+motores. **Vuelve a `npm run db:use-postgres` antes de desplegar.**
+
+### Acceso al panel
 
 Credenciales del seed (se definen en `.env`):
 
@@ -35,7 +55,7 @@ Credenciales del seed (se definen en `.env`):
 ### Variables de entorno
 
 ```bash
-DATABASE_URL="file:./dev.db"              # Postgres en producción
+DATABASE_URL="postgresql://…?sslmode=require"
 AUTH_SECRET="…"                           # openssl rand -base64 32
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 NEXT_PUBLIC_WHATSAPP_NUMBER="573001234567" # internacional, sin "+" ni espacios
@@ -56,7 +76,7 @@ por el real antes de publicar o los clientes escribirán a un número inexistent
 | Framework | Next.js 16 (App Router, React 19, Turbopack) |
 | Lenguaje | TypeScript en modo estricto |
 | Estilos | Tailwind CSS v4 + shadcn/ui (Base UI) |
-| Base de datos | Prisma 7 · SQLite en desarrollo, PostgreSQL en producción |
+| Base de datos | Prisma 7 · PostgreSQL (SQLite opcional en local) |
 | Autenticación | Auth.js v5 (NextAuth) con credenciales + bcrypt |
 | Validación | Zod v4 · React Hook Form en el checkout |
 | Iconos | lucide-react |
@@ -116,9 +136,11 @@ el servidor, no solo en la interfaz.
 consecutivos y por tanto adivinables; sin esa llave, cualquiera podría leer
 nombres, teléfonos y direcciones recorriendo la secuencia.
 
-**El esquema de Prisma es portable entre SQLite y PostgreSQL**: sin `enum`, sin
+**El esquema de Prisma es portable entre PostgreSQL y SQLite**: sin `enum`, sin
 arrays escalares y sin tipos nativos. Por eso los estados son `String`
 validados con Zod y las especificaciones técnicas se guardan como JSON en texto.
+El script `scripts/datasource.mjs` cambia el motor y regenera la migración
+inicial con `prisma migrate diff`, que no necesita una base en marcha.
 
 **Los productos con pedidos no se eliminan, se ocultan.** El histórico guarda
 nombre y precio de cada línea, pero borrar el producto rompería el enlace.
@@ -159,58 +181,59 @@ scripts de Next. Es el siguiente paso natural de endurecimiento.
 | `npm run build` | Compilación de producción |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
-| `npm run db:migrate` | Crea/aplica migraciones en desarrollo |
+| `npm run db:migrate` | Crea una migración nueva tras cambiar el esquema |
 | `npm run db:seed` | Reinicia y siembra los datos de ejemplo |
 | `npm run db:studio` | Prisma Studio |
 | `npm run db:reset` | Borra, migra y vuelve a sembrar |
 | `npm run db:use-postgres` | Cambia el datasource a PostgreSQL |
+| `npm run db:use-sqlite` | Cambia el datasource a SQLite |
 
 ---
 
 ## Despliegue en Vercel
 
 SQLite no sirve en Vercel: el sistema de archivos es efímero y de solo lectura.
-Hace falta un PostgreSQL gestionado (Neon, Vercel Postgres, Supabase…).
+Hace falta un PostgreSQL gestionado.
 
-**1. Cambia el datasource**
+**1. Crea la base de datos**
 
-```bash
-npm run db:use-postgres
-```
+En el panel de Vercel → *Storage* → *Create Database* → **Neon (Postgres)**. La
+integración añade `DATABASE_URL` al proyecto automáticamente. Cualquier otro
+proveedor sirve: basta con crear la variable a mano.
 
-Reescribe el `provider` del esquema y borra las migraciones de SQLite, que usan
-otro dialecto. Los modelos no cambian: el esquema ya es compatible con ambos.
-
-**2. Crea la base de datos**
-
-En el panel de Vercel → *Storage* → *Create Database* → **Neon (Postgres)**, o
-usa cualquier proveedor. Copia la cadena de conexión.
-
-**3. Genera la migración inicial contra Postgres**
-
-```bash
-DATABASE_URL="postgresql://…" npx prisma migrate dev --name init
-DATABASE_URL="postgresql://…" npm run db:seed    # opcional
-```
-
-**4. Configura las variables en Vercel**
+**2. Comprueba el resto de variables**
 
 | Variable | Valor |
 |---|---|
-| `DATABASE_URL` | cadena de Postgres (con `?sslmode=require`) |
+| `DATABASE_URL` | la inyecta Neon; si no, la cadena con `?sslmode=require` |
 | `AUTH_SECRET` | `openssl rand -base64 32` |
 | `NEXT_PUBLIC_SITE_URL` | `https://tu-dominio.vercel.app` |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | el número real que atiende los pedidos |
 
-**5. Usa `vercel-build` como Build Command**
+**3. Despliega**
 
-Aplica las migraciones antes de compilar:
+Vercel detecta el script `vercel-build` del `package.json` y lo usa en lugar de
+`build`:
 
 ```
 prisma generate && prisma migrate deploy && next build
 ```
 
-**6. Opcional: bundle más liviano**
+`migrate deploy` aplica `prisma/migrations/0_init` en el primer despliegue, así
+que las tablas se crean solas.
+
+**4. Carga el catálogo inicial**
+
+```bash
+vercel env pull .env.local
+DATABASE_URL="$(grep ^DATABASE_URL .env.local | cut -d= -f2- | tr -d \")" npm run db:seed
+```
+
+O empieza de cero creando los productos desde `/admin`.
+
+**5. Opcional: bundle más liviano**
+
+Si no piensas volver a SQLite en local:
 
 ```bash
 npm uninstall @prisma/adapter-better-sqlite3 better-sqlite3

@@ -1,14 +1,15 @@
 // NOVA TECH — esquema de datos
 //
-// PORTABILIDAD: este esquema está escrito para funcionar sin cambios tanto en
-// SQLite (desarrollo) como en PostgreSQL (producción en Vercel). Por eso:
+// PORTABILIDAD: este esquema funciona sin cambios tanto en PostgreSQL
+// (producción) como en SQLite (desarrollo sin servidor). Por eso:
 //   - No se usan `enum` (SQLite no los soporta): los estados son String
 //     validados con Zod en `src/lib/validations.ts`.
 //   - No se usan arrays escalares: las imágenes y variantes son tablas propias.
 //   - No se usan tipos nativos (@db.Text, etc.).
 //
-// Para pasar a Postgres: `npm run db:use-postgres` (cambia el provider) y
-// apunta DATABASE_URL a tu instancia. Ver README.
+// Para cambiar de motor: `npm run db:use-postgres` o `npm run db:use-sqlite`.
+// El script reescribe el `provider` y regenera la migración inicial, porque
+// las migraciones sí son específicas de cada dialecto. Ver README.
 
 generator client {
   provider = "prisma-client"
@@ -16,7 +17,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 // ---------------------------------------------------------------------------
