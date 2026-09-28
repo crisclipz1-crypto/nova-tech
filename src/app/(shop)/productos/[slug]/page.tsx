@@ -116,7 +116,7 @@ export default async function ProductPage({
               {product.category.name}
             </Link>
             {product.badge && (
-              <span className="rounded-full bg-foreground px-2.5 py-1 font-mono text-[10px] tracking-[0.1em] text-background uppercase">
+              <span className="rounded-full bg-brand px-2.5 py-1 font-mono text-[10px] tracking-[0.1em] text-brand-foreground uppercase">
                 {product.badge}
               </span>
             )}
@@ -159,9 +159,9 @@ export default async function ProductPage({
             />
           </div>
 
-          <ul className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-border">
+          <ul className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-brand-soft">
             {TRUST.map(({ icon: Icon, title, body }) => (
-              <li key={title} className="bg-background p-4">
+              <li key={title} className="bg-brand-muted p-4">
                 <Icon className="size-4 text-brand" />
                 <p className="mt-2 text-[13px] font-medium">{title}</p>
                 <p className="mt-0.5 text-xs text-muted-foreground">{body}</p>

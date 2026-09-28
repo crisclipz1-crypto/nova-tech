@@ -35,7 +35,7 @@ export function SiteFooter({
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-24 border-t bg-surface">
+    <footer className="mt-24 border-t border-brand-soft bg-brand-muted">
       <div className="container-page py-14 sm:py-16">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,1fr)] lg:gap-8">
           <div className="max-w-sm">
@@ -53,7 +53,7 @@ export function SiteFooter({
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2.5 text-sm transition-colors hover:border-foreground"
+              className="mt-5 inline-flex items-center gap-2 rounded-full border border-brand-soft bg-background px-4 py-2.5 text-sm transition-colors hover:border-brand"
             >
               <MessageCircle className="size-4 text-success" />
               <span className="tabular">{WHATSAPP_DISPLAY}</span>
@@ -116,7 +116,7 @@ export function SiteFooter({
           </nav>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t pt-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-4 border-t border-brand-soft pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted-foreground">
             © {year} {SITE.legalName}. Todos los derechos reservados.
           </p>

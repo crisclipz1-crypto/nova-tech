@@ -83,7 +83,7 @@ export function ProductGallery({
                 aria-current={index === slide}
                 className={cn(
                   "h-1 rounded-full transition-all duration-300",
-                  index === slide ? "w-6 bg-foreground" : "w-1.5 bg-border"
+                  index === slide ? "w-6 bg-brand" : "w-1.5 bg-border"
                 )}
               />
             ))}
@@ -107,7 +107,7 @@ export function ProductGallery({
                 className={cn(
                   "relative aspect-square overflow-hidden rounded-lg bg-surface ring-offset-2 transition-all",
                   index === active
-                    ? "ring-2 ring-foreground"
+                    ? "ring-2 ring-brand"
                     : "opacity-60 hover:opacity-100"
                 )}
               >

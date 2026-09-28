@@ -83,15 +83,17 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
 
                 <Icon className="absolute top-4 left-4 size-5 text-white/85 sm:top-5 sm:left-5" />
 
-                <div className="relative">
+                {/* Marcado para la auditoría de contraste: el fondo es una foto con
+                    degradado, no un color plano que se pueda medir. */}
+                <div className="relative" data-over-image>
                   <p className="flex items-baseline gap-2 text-base font-medium text-white sm:text-lg">
                     {category.name}
-                    <span className="tabular font-mono text-[10px] text-white/60">
+                    <span className="tabular font-mono text-[10px] text-white/75">
                       {padCount(category._count.products)}
                     </span>
                   </p>
                   {category.description && (
-                    <p className="mt-0.5 line-clamp-1 text-xs text-white/70">
+                    <p className="mt-0.5 line-clamp-1 text-xs text-white/85">
                       {category.description}
                     </p>
                   )}

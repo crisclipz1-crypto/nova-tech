@@ -15,7 +15,7 @@ const CLAIMS = [
  */
 export function AnnouncementBar() {
   return (
-    <div className="border-b border-foreground/10 bg-foreground text-background">
+    <div className="bg-brand text-brand-foreground">
       {/* Móvil: marquesina */}
       <div className="group relative flex overflow-hidden py-2 sm:hidden">
         <div className="flex shrink-0 animate-marquee items-center group-hover:[animation-play-state:paused] motion-reduce:animate-none">

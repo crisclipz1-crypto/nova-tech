@@ -75,17 +75,17 @@ export default async function HomePage() {
       <Testimonials reviews={reviews} />
 
       <section className="container-page pb-20">
-        <div className="flex flex-col items-start gap-6 rounded-2xl bg-brand-muted px-6 py-12 sm:items-center sm:px-10 sm:text-center lg:py-16">
-          <p className="eyebrow text-brand">¿Listo?</p>
+        <div className="flex flex-col items-start gap-6 rounded-2xl bg-brand px-6 py-12 text-brand-foreground sm:items-center sm:px-10 sm:text-center lg:py-16">
+          <p className="eyebrow text-white/80">¿Listo?</p>
           <h2 className="display-2 max-w-2xl text-balance">
             Tu próximo equipo, pagado en la puerta de tu casa
           </h2>
-          <p className="max-w-lg text-base text-pretty text-muted-foreground">
+          <p className="max-w-lg text-base text-pretty text-white/80">
             Sin pasarela de pago, sin datos de tarjeta, sin letra pequeña.
           </p>
           <Link
             href="/productos"
-            className="group mt-2 inline-flex h-13 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-medium text-background transition-all hover:bg-foreground/90 active:scale-[0.98]"
+            className="group mt-2 inline-flex h-13 items-center gap-2 rounded-full bg-white px-7 text-sm font-medium text-brand transition-all hover:bg-white/90 active:scale-[0.98]"
           >
             Ver el catálogo
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />

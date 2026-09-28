@@ -81,7 +81,7 @@ export function CatalogToolbar({
             <SlidersHorizontal className="size-3.5" />
             Filtros
             {activeFilters > 0 && (
-              <span className="tabular grid size-4 place-items-center rounded-full bg-foreground font-mono text-[9px] text-background">
+              <span className="tabular grid size-4 place-items-center rounded-full bg-brand font-mono text-[9px] text-brand-foreground">
                 {activeFilters}
               </span>
             )}

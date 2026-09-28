@@ -308,7 +308,7 @@ export default async function AdminDashboard() {
                       </span>
                       <span className="mt-1 block h-1 overflow-hidden rounded-full bg-muted">
                         <span
-                          className="block h-full rounded-full bg-foreground/30"
+                          className="block h-full rounded-full bg-brand/35"
                           style={{ width: `${(product.views / maxViews) * 100}%` }}
                         />
                       </span>

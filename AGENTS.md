@@ -29,6 +29,10 @@ Auth.js v5 · Tailwind v4 · shadcn/ui sobre Base UI.
   semántica de enlace.
 - **No exportes constantes desde módulos `"use client"` hacia el servidor.** Los
   valores compartidos viven en `src/types/`.
+- **El color de marca es #0037FF y va en tokens**, no incrustado en clases. Usa
+  `bg-brand` / `text-brand` / `brand-muted` / `brand-soft`. Sobre fondo oscuro
+  el azul base no contrasta (2.82:1): ahí se usa `brand-soft`. El blanco
+  translúcido sobre azul necesita `/80` o más para pasar AA.
 
 ## Comandos
 

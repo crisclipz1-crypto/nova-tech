@@ -11,34 +11,27 @@ catálogo, pedidos, campañas y reseñas.
 
 ## Arranque rápido
 
-El esquema apunta a **PostgreSQL**, que es lo que corre en producción.
+Arranca con SQLite, así que no hace falta levantar ninguna base de datos.
 
 ```bash
 npm install
-cp .env.example .env          # pon tu DATABASE_URL y genera AUTH_SECRET
-npx prisma migrate deploy     # crea las tablas
+cp .env.example .env          # genera AUTH_SECRET (ver abajo)
+npx prisma migrate deploy     # crea las tablas en ./dev.db
 npm run db:seed               # carga catálogo, pedidos y reseñas de ejemplo
 npm run dev
 ```
 
-Si el proyecto ya está desplegado, `vercel env pull .env.local` trae la
-conexión sin copiar nada a mano.
-
 La tienda queda en <http://localhost:3000> y el panel en
 <http://localhost:3000/admin>.
 
-### Sin servidor de base de datos
-
-Para desarrollar con SQLite en un archivo local:
+### Para producción
 
 ```bash
-npm run db:use-sqlite         # cambia el provider y regenera la migración
-# DATABASE_URL="file:./dev.db" en .env
-npx prisma migrate deploy && npm run db:seed
+npm run db:use-postgres       # cambia el provider y regenera la migración
 ```
 
 Los modelos no cambian: el esquema está escrito para funcionar igual en ambos
-motores. **Vuelve a `npm run db:use-postgres` antes de desplegar.**
+motores. Ver [Despliegue en Vercel](#despliegue-en-vercel).
 
 ### Acceso al panel
 
@@ -55,7 +48,7 @@ Credenciales del seed (se definen en `.env`):
 ### Variables de entorno
 
 ```bash
-DATABASE_URL="postgresql://…?sslmode=require"
+DATABASE_URL="file:./dev.db"              # Postgres en producción
 AUTH_SECRET="…"                           # openssl rand -base64 32
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 NEXT_PUBLIC_WHATSAPP_NUMBER="573001234567" # internacional, sin "+" ni espacios
@@ -76,7 +69,7 @@ por el real antes de publicar o los clientes escribirán a un número inexistent
 | Framework | Next.js 16 (App Router, React 19, Turbopack) |
 | Lenguaje | TypeScript en modo estricto |
 | Estilos | Tailwind CSS v4 + shadcn/ui (Base UI) |
-| Base de datos | Prisma 7 · PostgreSQL (SQLite opcional en local) |
+| Base de datos | Prisma 7 · SQLite en local, PostgreSQL en producción |
 | Autenticación | Auth.js v5 (NextAuth) con credenciales + bcrypt |
 | Validación | Zod v4 · React Hook Form en el checkout |
 | Iconos | lucide-react |
@@ -113,6 +106,22 @@ src/
 ├─ auth.ts · auth.config.ts   configuración de Auth.js
 └─ proxy.ts                   protege /admin (antes `middleware.ts`)
 ```
+
+---
+
+## Color de marca
+
+El azul **#0037FF** no es un acento: ocupa bloques enteros —cinta superior,
+hero, "cómo funciona", CTA final, pie— además de todos los botones, etiquetas
+y estados activos. El blanco y la tinta negra son el descanso entre ellos.
+
+Rinde **7.02:1** sobre blanco, así que aguanta texto pequeño en ambos sentidos.
+Sobre negro solo da 2.82:1, por eso los bloques oscuros usan `brand-soft` (el
+tinte claro) en lugar del azul base. El blanco translúcido sobre azul necesita
+al menos un 80 % de opacidad para superar AA; por debajo de eso no se usa.
+
+Los tokens viven en `src/app/globals.css`. Cambiar la marca entera es cambiar
+`--brand` y sus tintes; ningún componente lleva el color incrustado.
 
 ---
 
@@ -194,6 +203,13 @@ scripts de Next. Es el siguiente paso natural de endurecimiento.
 
 SQLite no sirve en Vercel: el sistema de archivos es efímero y de solo lectura.
 Hace falta un PostgreSQL gestionado.
+
+**0. Cambia el datasource y súbelo**
+
+```bash
+npm run db:use-postgres
+git commit -am "Datasource a PostgreSQL" && git push
+```
 
 **1. Crea la base de datos**
 

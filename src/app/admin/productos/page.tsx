@@ -39,7 +39,7 @@ export default async function AdminProductsPage({
 
         <Link
           href="/admin/productos/nuevo"
-          className="inline-flex h-10 items-center gap-2 rounded-full bg-foreground px-4 text-sm font-medium text-background transition-colors hover:bg-foreground/90"
+          className="inline-flex h-10 items-center gap-2 rounded-full bg-brand px-4 text-sm font-medium text-brand-foreground transition-colors hover:bg-brand-hover"
         >
           <PackagePlus className="size-4" />
           Nuevo producto
@@ -65,7 +65,7 @@ export default async function AdminProductsPage({
             href={q ? `/admin/productos?q=${encodeURIComponent(q)}` : "/admin/productos"}
             className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
               !categoria
-                ? "border-foreground bg-foreground text-background"
+                ? "border-brand bg-brand text-brand-foreground"
                 : "hover:border-foreground"
             }`}
           >
@@ -79,7 +79,7 @@ export default async function AdminProductsPage({
               }`}
               className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
                 categoria === item.slug
-                  ? "border-foreground bg-foreground text-background"
+                  ? "border-brand bg-brand text-brand-foreground"
                   : "hover:border-foreground"
               }`}
             >
@@ -154,7 +154,7 @@ export default async function AdminProductsPage({
                               </span>
                             )}
                             {product.bestSeller && (
-                              <span className="rounded-full bg-foreground px-1.5 py-0.5 text-[10px] text-background">
+                              <span className="rounded-full bg-brand px-1.5 py-0.5 text-[10px] text-brand-foreground">
                                 Top
                               </span>
                             )}

@@ -83,7 +83,7 @@ export function OrderSummary() {
                     className="object-cover"
                   />
                 )}
-                <span className="tabular absolute -top-1 -right-1 grid size-5 place-items-center rounded-full bg-foreground font-mono text-[10px] text-background">
+                <span className="tabular absolute -top-1 -right-1 grid size-5 place-items-center rounded-full bg-brand font-mono text-[10px] text-brand-foreground">
                   {item.quantity}
                 </span>
               </span>

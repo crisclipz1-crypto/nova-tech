@@ -21,18 +21,18 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="border-y bg-foreground py-16 text-background sm:py-20">
+    <section className="bg-brand py-16 text-brand-foreground sm:py-20">
       <div className="container-page">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-xl">
-            <p className="eyebrow text-brand">Cómo funciona</p>
+            <p className="eyebrow text-white/80">Cómo funciona</p>
             <h2 className="display-2 mt-3 text-balance">
               Tres pasos y ni un solo dato bancario
             </h2>
           </div>
           <Link
             href="/como-funciona"
-            className="group inline-flex items-center gap-2 text-sm opacity-70 transition-opacity hover:opacity-100"
+            className="group inline-flex items-center gap-2 text-sm text-white/85 transition-colors hover:text-white"
           >
             Ver el detalle
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
@@ -41,14 +41,14 @@ export function HowItWorks() {
 
         <ol className="mt-12 grid gap-8 sm:grid-cols-3 sm:gap-6">
           {STEPS.map(({ step, title, body }) => (
-            <li key={step} className="border-t border-background/20 pt-5">
-              <p className="tabular font-mono text-xs tracking-[0.18em] text-brand">
+            <li key={step} className="border-t border-white/25 pt-5">
+              <p className="tabular font-mono text-xs tracking-[0.18em] text-white/80">
                 {step}
               </p>
               <h3 className="mt-3 text-lg font-medium tracking-[-0.02em]">
                 {title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed opacity-65">{body}</p>
+              <p className="mt-2 text-sm leading-relaxed text-white/85">{body}</p>
             </li>
           ))}
         </ol>

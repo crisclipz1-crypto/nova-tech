@@ -45,7 +45,7 @@ export default async function NotFound() {
 
           <Link
             href="/productos"
-            className="group mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-foreground px-7 text-sm font-medium text-background transition-all hover:bg-foreground/90"
+            className="group mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-brand px-7 text-sm font-medium text-brand-foreground transition-all hover:bg-brand-hover"
           >
             Ver el catálogo
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />

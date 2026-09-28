@@ -238,7 +238,7 @@ export default async function AdminOrderDetail({
             <ol className="space-y-3">
               {timeline.map((step) => (
                 <li key={step.label} className="flex gap-3 text-sm">
-                  <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-foreground" />
+                  <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand" />
                   <span>
                     <span className="block font-medium">{step.label}</span>
                     <span className="block text-xs text-muted-foreground">

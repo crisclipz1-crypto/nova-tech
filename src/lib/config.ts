@@ -106,12 +106,23 @@ export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
 
 /** Temas visuales de los banners de temporada. */
 export const BANNER_THEMES = {
+  /**
+   * Tema por defecto: el hero es un bloque azul de marca a sangre completa.
+   * Es lo primero que se ve al entrar y lo que fija el color de la tienda.
+   */
   default: {
-    label: "Estándar",
-    wrapper: "bg-surface text-foreground",
+    label: "Marca (azul)",
+    wrapper: "bg-brand text-brand-foreground",
+    eyebrow: "text-white/80",
+    cta: "bg-white text-brand hover:bg-white/90",
+    glow: "bg-white/15",
+  },
+  claro: {
+    label: "Claro",
+    wrapper: "bg-brand-muted text-foreground",
     eyebrow: "text-brand",
-    cta: "bg-foreground text-background hover:bg-foreground/90",
-    glow: "bg-brand/10",
+    cta: "bg-brand text-brand-foreground hover:bg-brand-hover",
+    glow: "bg-brand/15",
   },
   blackfriday: {
     label: "Black Friday",
@@ -135,11 +146,11 @@ export const BANNER_THEMES = {
     glow: "bg-[#ffd166]/20",
   },
   promo: {
-    label: "Promoción",
-    wrapper: "bg-brand text-brand-foreground",
-    eyebrow: "text-white/70",
-    cta: "bg-white text-brand hover:bg-white/90",
-    glow: "bg-white/15",
+    label: "Tinta",
+    wrapper: "bg-neutral-950 text-neutral-50",
+    eyebrow: "text-brand-soft",
+    cta: "bg-brand text-brand-foreground hover:bg-brand-hover",
+    glow: "bg-brand/25",
   },
 } as const;
 

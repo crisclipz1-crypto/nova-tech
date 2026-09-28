@@ -25,7 +25,7 @@ const REASONS = [
 
 export function WhyUs() {
   return (
-    <section className="bg-surface py-16 sm:py-20">
+    <section className="bg-brand-muted py-16 sm:py-20">
       <div className="container-page">
         <div className="max-w-2xl">
           <p className="eyebrow text-brand">Por qué elegirnos</p>
@@ -39,11 +39,13 @@ export function WhyUs() {
           </p>
         </div>
 
-        <ul className="mt-12 grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-2">
+        {/* El fondo azul se ve a través de los huecos de 1px de la rejilla y
+            hace de línea divisoria, sin necesidad de bordes. */}
+        <ul className="mt-12 grid gap-px overflow-hidden rounded-xl bg-brand-soft sm:grid-cols-2">
           {REASONS.map(({ icon: Icon, title, body }) => (
             <li
               key={title}
-              className="group bg-background p-6 transition-colors hover:bg-brand-muted/40 sm:p-8"
+              className="group bg-background p-6 transition-colors hover:bg-brand-muted/60 sm:p-8"
             >
               <Icon className="size-5 text-brand transition-transform duration-300 group-hover:-translate-y-0.5" />
               <h3 className="mt-4 text-lg font-medium tracking-[-0.02em]">

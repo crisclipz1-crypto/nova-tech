@@ -60,7 +60,7 @@ export function Pagination({
             className={cn(
               "tabular grid size-9 place-items-center rounded-full text-sm transition-colors",
               n === page
-                ? "bg-foreground text-background"
+                ? "bg-brand text-brand-foreground"
                 : "hover:bg-muted"
             )}
           >

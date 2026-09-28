@@ -169,10 +169,10 @@ export function ProductPurchase({
                         : "h-10 rounded-full border px-4 text-sm",
                       isColor
                         ? isSelected
-                          ? "ring-2 ring-foreground"
-                          : "ring-1 ring-border hover:ring-foreground/40"
+                          ? "ring-2 ring-brand"
+                          : "ring-1 ring-border hover:ring-brand/40"
                         : isSelected
-                          ? "border-foreground bg-foreground text-background"
+                          ? "border-brand bg-brand text-brand-foreground"
                           : "hover:border-foreground",
                       unavailable &&
                         "cursor-not-allowed opacity-35 after:absolute after:inset-x-1 after:top-1/2 after:h-px after:bg-current"

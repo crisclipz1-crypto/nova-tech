@@ -168,7 +168,7 @@ const PRODUCTS: SeedProduct[] = [
     variants: [
       { group: "color", label: "Color", value: "Negro medianoche", hex: "#141414", stock: 18 },
       { group: "color", label: "Color", value: "Blanco hueso", hex: "#EDE9E3", stock: 11 },
-      { group: "color", label: "Color", value: "Azul cobalto", hex: "#2563EB", stock: 5 },
+      { group: "color", label: "Color", value: "Azul cobalto", hex: "#0037FF", stock: 5 },
     ],
   },
   {

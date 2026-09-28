@@ -262,7 +262,7 @@ export function ProductForm({
                         />
                       )}
                       {index === 0 && (
-                        <span className="absolute inset-x-0 bottom-0 bg-foreground/85 py-0.5 text-center font-mono text-[8px] tracking-wider text-background uppercase">
+                        <span className="absolute inset-x-0 bottom-0 bg-brand/90 py-0.5 text-center font-mono text-[8px] tracking-wider text-background uppercase">
                           Portada
                         </span>
                       )}

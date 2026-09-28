@@ -83,7 +83,7 @@ export default async function AdminOrdersPage({
             href={href({ estado: undefined, pagina: undefined })}
             className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
               !status
-                ? "border-foreground bg-foreground text-background"
+                ? "border-brand bg-brand text-brand-foreground"
                 : "hover:border-foreground"
             }`}
           >
@@ -95,7 +95,7 @@ export default async function AdminOrdersPage({
               href={href({ estado: key, pagina: undefined })}
               className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
                 status === key
-                  ? "border-foreground bg-foreground text-background"
+                  ? "border-brand bg-brand text-brand-foreground"
                   : "hover:border-foreground"
               }`}
             >

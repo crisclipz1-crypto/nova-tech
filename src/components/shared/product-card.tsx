@@ -109,7 +109,7 @@ export function ProductCard({
               </span>
             )}
             {product.isNew && percent === null && (
-              <span className="rounded-full bg-foreground px-2 py-0.5 font-mono text-[10px] font-medium tracking-[0.1em] text-background uppercase">
+              <span className="rounded-full bg-brand px-2 py-0.5 font-mono text-[10px] font-medium tracking-[0.1em] text-brand-foreground uppercase">
                 Nuevo
               </span>
             )}
@@ -141,7 +141,7 @@ export function ProductCard({
                 "absolute right-2.5 bottom-2.5 grid size-9 place-items-center rounded-full border border-border/60 bg-background/95 text-foreground shadow-sm backdrop-blur-sm transition-all duration-300",
                 "hover:scale-105 hover:border-foreground active:scale-95",
                 "sm:translate-y-2 sm:opacity-0 sm:group-hover/card:translate-y-0 sm:group-hover/card:opacity-100 sm:focus-visible:translate-y-0 sm:focus-visible:opacity-100",
-                justAdded && "border-foreground bg-foreground text-background"
+                justAdded && "border-brand bg-brand text-brand-foreground"
               )}
             >
               {justAdded ? (

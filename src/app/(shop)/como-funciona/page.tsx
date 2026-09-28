@@ -112,7 +112,7 @@ const FAQ = [
 export default function HowItWorksPage() {
   return (
     <div className="pb-20">
-      <section className="border-b bg-surface">
+      <section className="border-b border-brand-soft bg-brand-muted">
         <div className="container-page py-14 sm:py-20">
           <div className="max-w-2xl">
             <p className="eyebrow text-brand">Cómo funciona</p>
@@ -176,12 +176,12 @@ export default function HowItWorksPage() {
       ))}
 
       <section className="container-page pt-8">
-        <div className="flex flex-col items-start gap-5 rounded-2xl bg-foreground px-6 py-12 text-background sm:items-center sm:px-10 sm:text-center">
-          <p className="eyebrow text-brand">¿Te quedó alguna duda?</p>
+        <div className="flex flex-col items-start gap-5 rounded-2xl bg-brand px-6 py-12 text-brand-foreground sm:items-center sm:px-10 sm:text-center">
+          <p className="eyebrow text-white/80">¿Te quedó alguna duda?</p>
           <h2 className="display-2 max-w-xl text-balance">
             Pregúntanos antes de comprar
           </h2>
-          <p className="max-w-md text-base text-pretty opacity-70">
+          <p className="max-w-md text-base text-pretty text-white/80">
             Te responde una persona del equipo, normalmente en minutos.
           </p>
 
@@ -200,7 +200,7 @@ export default function HowItWorksPage() {
 
             <Link
               href="/productos"
-              className="group inline-flex h-12 items-center gap-2 rounded-full border border-background/25 px-6 text-sm transition-colors hover:border-background/60"
+              className="group inline-flex h-12 items-center gap-2 rounded-full border border-white/35 px-6 text-sm transition-colors hover:border-white hover:bg-white/10"
             >
               Ver el catálogo
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />

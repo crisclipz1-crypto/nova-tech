@@ -54,7 +54,7 @@ export function FreeShippingMeter({
         <div
           className={cn(
             "h-full rounded-full transition-[width] duration-500 ease-out",
-            reached ? "bg-success" : "bg-foreground"
+            reached ? "bg-success" : "bg-brand"
           )}
           style={{ width: `${progress}%` }}
         />
